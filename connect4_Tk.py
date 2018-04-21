@@ -1,12 +1,13 @@
 from tkinter import *
 from tkinter import font
+import numpy as np 
 
 class Info(Frame):
     def __init__(self, master=None):
         Frame.__init__(self)
         self.configure(width=500, height=100)
         police = font.Font(self, size=20, family='Arial')
-        self.t = Label(self, text="Tour de Jaune", font=police)
+        self.t = Label(self, text="Yellow turn", font=police)
         self.t.grid(sticky=NSEW, pady=20)
 
 class Piont(object):
@@ -14,6 +15,7 @@ class Piont(object):
         self.can = can
         self.x = x
         self.y = y
+        self.number = 0
         self.coul = coul
 
         self.tour = 1
@@ -25,7 +27,25 @@ class Piont(object):
 
     def changeCouleur(self, coul):
         self.can.itemconfigure(self.piont, fill=coul)
+        if (coul != "red"):
+            self.number = 1
+        else:
+            self.number = -1
         self.coul = coul
+
+def computer_turn(matrix_p):
+    i=1
+    rand=0
+    while (i!=0):
+        i=0
+        rand = np.random.randint(1,6)
+        while (matrix_p[i][rand] != 0):
+            if i==5:
+                i=0 
+                break
+            i+=1
+    return i,rand
+            
 
 class Terrain(Canvas):
     def __init__(self, master=None):
@@ -45,6 +65,16 @@ class Terrain(Canvas):
             self.p.append(liste_rangee)
         
         self.bind("<Button-1>", self.detCol)
+    
+
+    def convert_matrix(self):
+        matrix_p = np.zeros((6,6))
+        for rindex,rvalue in enumerate(matrix_p):
+            for cindex,cvalue in enumerate(rvalue):
+                matrix_p[rindex][cindex] = self.p[rindex][cindex].number
+                print(matrix_p[rindex][cindex])
+        return matrix_p
+
 
     def detCol(self, event):
         if self.perm:
@@ -53,7 +83,7 @@ class Terrain(Canvas):
             
             lig = 0
             while lig < len(self.p):            
-                if self.p[0][col].coul == "red" or self.p[0][0].coul == "yellow":
+                if self.p[0][col].number == "red" or self.p[0][col].coul == "yellow":
                     break
                 
                 if self.p[lig][col].coul == "red" or self.p[lig][col].coul == "yellow":
@@ -68,17 +98,14 @@ class Terrain(Canvas):
                 if self.p[lig][col].coul != "red" and self.p[lig][col].coul != "yellow":
                     lig+=1
 
+                        
+            i,j = computer_turn(self.convert_matrix())
+            self.p[5-i][j].changeCouleur("red")
+            self.joueur == 2
+            self.joueur = 1
+            info.t.config(text="Yellow turn")
+            self.coul = "yellow"
             
-            
-            if self.joueur == 1:
-                self.joueur = 2
-                info.t.config(text="Tour de rouge")
-                self.coul = "red"
-
-            elif self.joueur == 2:
-                self.joueur = 1
-                info.t.config(text="Tour de jaune")
-                self.coul = "yellow"
 
             self.Horizontal()
             self.Vertical()
@@ -91,11 +118,11 @@ class Terrain(Canvas):
             j = 0
             while(j < 3):
                 if(self.p[i][j].coul == self.p[i][j+1].coul == self.p[i][j+2].coul == self.p[i][j+3].coul == "red"):
-                    info.t.config(text="Victoire de rouge !")
+                    info.t.config(text="Victory the red!")
                     self.perm = False
                     break
                 elif(self.p[i][j].coul == self.p[i][j+1].coul == self.p[i][j+2].coul == self.p[i][j+3].coul == "yellow"):
-                    info.t.config(text="Victoire de Jaune !")
+                    info.t.config(text="Victory the yellow")
                     self.perm = False
                     break
                 j +=1
@@ -107,11 +134,11 @@ class Terrain(Canvas):
             j = 0
             while(j < len(self.p[i])):
                 if(self.p[i][j].coul == self.p[i+1][j].coul == self.p[i+2][j].coul == self.p[i+3][j].coul == "red"):
-                    info.t.config(text="Victoire de rouge !")
+                    info.t.config(text="Victory the red!")
                     self.perm = False
                     break
                 elif(self.p[i][j].coul == self.p[i+1][j].coul == self.p[i+2][j].coul == self.p[i+3][j].coul == "yellow"):
-                    info.t.config(text="Victoire de Jaune !")
+                    info.t.config(text="Victory the yellow!")
                     self.perm = False
                     break
                 j+=1
@@ -123,11 +150,11 @@ class Terrain(Canvas):
             j = 0
             while(j < 3):
                 if(self.p[i][j].coul == self.p[i+1][j+1].coul == self.p[i+2][j+2].coul == self.p[i+3][j+3].coul == "red"):
-                    info.t.config(text="Victoire de rouge !")
+                    info.t.config(text="Victory the red!")
                     self.perm = False
                     break
                 elif(self.p[i][j].coul == self.p[i+1][j+1].coul == self.p[i+2][j+2].coul == self.p[i+3][j+3].coul == "yellow"):
-                    info.t.config(text="Victoire de Jaune !")
+                    info.t.config(text="Victory the yellow!")
                     self.perm = False
                     break
                 j += 1
@@ -139,11 +166,11 @@ class Terrain(Canvas):
             j = len(self.p[i])-1
             while(j > len(self.p)-4):
                 if(self.p[i][j].coul == self.p[i+1][j-1].coul == self.p[i+2][j-2].coul == self.p[i+3][j-3].coul == "red"):
-                    info.t.config(text="Victoire de rouge !")
+                    info.t.config(text= "Victory the red!")
                     self.perm = False
                     break
                 elif(self.p[i][j].coul == self.p[i+1][j-1].coul == self.p[i+2][j-2].coul == self.p[i+3][j-3].coul == "yellow"):
-                    info.t.config(text="Victoire de Jaune !")
+                    info.t.config(text="Victory the yellow!")
                     self.perm = False
                     break
                 j -= 1
@@ -153,7 +180,7 @@ class Terrain(Canvas):
 
 root = Tk()
 root.geometry("500x550")
-root.title("Puissance 4 - V 1.0 -- Romain VAUSE")
+root.title("4Connect")
 
 info = Info(root)
 info.grid(row=0, column=0)
@@ -172,7 +199,7 @@ def rein():
     t = Terrain(root)
     t.grid(row=1, column=0)
 
-Button(root, text="Réinitialiser", command=rein).grid(row=2, column=0, pady=30)
+Button(root, text="Reset", command=rein).grid(row=2, column=0, pady=30)
 
 root.mainloop()
 
