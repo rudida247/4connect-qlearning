@@ -34,14 +34,14 @@ class Piont(object):
         self.coul = coul
 
 def computer_turn(matrix_p):
-    i=1
     rand=0
-    while (i!=0):
-        i=0
+    isempty = 0
+    while (isempty == 0):
         rand = np.random.randint(1,6)
-        while (matrix_p[i][rand] != 0):
-            if i==5:
-                i=0 
+        i=0
+        while (i < 6):
+            if (matrix_p[5-i][rand] == 0):
+                isempty = 1
                 break
             i+=1
     return i,rand
@@ -68,11 +68,11 @@ class Terrain(Canvas):
     
 
     def convert_matrix(self):
-        matrix_p = np.zeros((6,6))
+        matrix_p = np.zeros((6,7))
         for rindex,rvalue in enumerate(matrix_p):
             for cindex,cvalue in enumerate(rvalue):
                 matrix_p[rindex][cindex] = self.p[rindex][cindex].number
-                print(matrix_p[rindex][cindex])
+        print(matrix_p)
         return matrix_p
 
 
@@ -83,7 +83,7 @@ class Terrain(Canvas):
             
             lig = 0
             while lig < len(self.p):            
-                if self.p[0][col].number == "red" or self.p[0][col].coul == "yellow":
+                if self.p[0][col].coul == "red" or self.p[0][col].coul == "yellow":
                     break
                 
                 if self.p[lig][col].coul == "red" or self.p[lig][col].coul == "yellow":
