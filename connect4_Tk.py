@@ -37,7 +37,7 @@ def computer_turn(matrix_p):
     rand=0
     isempty = 0
     while (isempty == 0):
-        rand = np.random.randint(1,6)
+        rand = np.random.randint(0,7)
         i=0
         while (i < 6):
             if (matrix_p[5-i][rand] == 0):
@@ -98,7 +98,12 @@ class Terrain(Canvas):
                 if self.p[lig][col].coul != "red" and self.p[lig][col].coul != "yellow":
                     lig+=1
 
-                        
+
+            self.Horizontal()
+            self.Vertical()
+            self.Diagonal1()
+            self.Diagonal2()
+
             i,j = computer_turn(self.convert_matrix())
             self.p[5-i][j].changeCouleur("red")
             self.joueur == 2
